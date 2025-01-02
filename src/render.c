@@ -3,42 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   render.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:39:02 by arissane          #+#    #+#             */
-/*   Updated: 2024/12/20 15:22:23 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/02 13:41:03 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-
-//calculate if the camera ray hits the radius of the sphere from it's center
-float	ray_intersects_sphere(t_minirt *mrt, t_camera *camera_ray)
-{
-	t_vec3	oc;
-	float	a;
-	float	b;
-	float	c;
-	float	discriminant;
-	float	t1;
-	float	t2;
-
-	oc = vec3_subtract(&mrt->camera.position, &mrt->object[0].position);
-	a = vec3_dot(&camera_ray->direction, &camera_ray->direction);
-	b = 2.0f * vec3_dot(&oc, &camera_ray->direction);
-	c = vec3_dot(&oc, &oc) - mrt->object[0].radius * mrt->object[0].radius;
-	discriminant = b * b - 4.0f * a * c;
-	if (discriminant > 0)
-	{
-		t1 = (-b - sqrtf(discriminant)) / (2.0f * a);
-		t2 = (-b + sqrtf(discriminant)) / (2.0f * a);
-		if (t1 > 0)
-			return (t1);
-		if (t2 > 0)
-			return (t2);
-	}
-	return (-1);
-}
 
 //change the colour with a multiplier of the distance from the camera and clamp it to a range of 0-255
 void	check_base_colour(t_object *object, t_colour *col, float t)
@@ -59,38 +31,13 @@ void	check_base_colour(t_object *object, t_colour *col, float t)
 		col->blue = 255;
 }
 
-void	add_ambient_light(t_colour *colour, float light_intensity)
-{
-	colour->red = (int)(colour->red + light_intensity * 255);
-	colour->green = (int)(colour->green + light_intensity * 255);
-	colour->blue = (int)(colour->blue + light_intensity * 255);
-	if (colour->red > 255)
-		colour->red = 255;
-	if (colour->green > 255)
-		colour->green = 255;
-	if (colour->blue > 255)
-		colour->blue = 255;
-}
-
-//adds a diffusion multiplier to show depth calculated from the light source
-void	light_diffusion(t_colour *colour, t_vec3 normal, t_vec3 light_direction)
-{
-	float	diffusion;
-
-	diffusion = vec3_dot(&normal, &light_direction);
-	if (diffusion < 0.0f)
-		diffusion = 0.0f;
-	colour->red = (int)(colour->red * diffusion);
-	colour->green = (int)(colour->green * diffusion);
-	colour->blue = (int)(colour->blue * diffusion);
-}
-
 //Check what colour the pixel should be depending on if and how the camera rays hit the object
 int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 {
 	t_camera	camera_ray;
 	t_colour	colour;
 	float		t;
+	float		t_temp;
 	int		i;
 	int		object_id;
 	int		found_object;
@@ -111,22 +58,47 @@ int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 //check if there is a sphere, since only spheres can be calculated currently
 //this need to be changed to a function that finds the closest object once we have functions for planes and cylinders as well
 	i = 0;
+	t = -1;
 	object_id = 0;
 	found_object = 0;
+	camera_ray = create_camera_ray(&mrt->camera, pixel);
 	while (i < mrt->object_count)
 	{
-		if (mrt->object[i].type == SPHERE)
+		if (mrt->object[i].shape == PLANE)
 		{
-			object_id = i;
-			found_object = 1;
+			t_temp = ray_intersects_plane(mrt, &camera_ray, i);
+			if (t_temp > 0 && (t_temp < t || t == -1))
+			{
+				object_id = i;
+				t = t_temp;
+			}
+			found_object++;
+		}
+		else if (mrt->object[i].shape == SPHERE)
+		{
+			t_temp = ray_intersects_sphere(mrt, &camera_ray, i);
+			if (t_temp > 0 && (t_temp < t || t == -1))
+			{
+				object_id = i;
+				t = t_temp;
+			}
+			found_object++;
+		}
+		else if (mrt->object[i].shape == CYLINDER)
+		{
+			t_temp = ray_intersects_cylinder(mrt, &camera_ray, i);
+			if (t_temp > 0 && (t_temp < t || t == -1))
+			{
+				object_id = i;
+				t = t_temp;
+			}
+			found_object++;
 		}
 		i++;
 	}
 	if (found_object == 0)
 		return (0x000000);
 
-	camera_ray = create_camera_ray(&mrt->camera, pixel);
-	t = ray_intersects_sphere(mrt, &camera_ray);
 	if (t > 0)
 	{
 		check_base_colour(&mrt->object[object_id], &colour, t);

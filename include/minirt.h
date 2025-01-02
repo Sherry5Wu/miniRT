@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:55:13 by arissane          #+#    #+#             */
-/*   Updated: 2024/12/30 12:37:37 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/02 13:51:30 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@
 # define WIN_WIDTH 1200
 # define WIN_HEIGHT 1200
 
-# define PLANE 1
-# define SPHERE 2
-# define CYLINDER 3
+// # define PLANE 1
+// # define SPHERE 2
+// # define CYLINDER 3
 
 typedef struct s_colour
 {
@@ -51,9 +51,9 @@ typedef struct s_vec2
 */
 typedef enum	s_object_shape
 {
-	PLANE = 0,
-	SPHERE,
-	CYLINDER
+	PLANE = 1,
+	SPHERE = 2,
+	CYLINDER = 3,
 }				t_shape;
 
 /*
@@ -66,10 +66,9 @@ typedef enum	s_object_shape
 */
 typedef struct s_object
 {
-	//int			type;
-	t_shape		shape; // change the type into a structure type , it will be easy for us to add more shape in the future if we want.
+	t_shape		shape;
 	t_vec3		position;
-	t_vec3		orientation;// should we change to normal? why name it as orientation?
+	t_vec3		orientation;
 	t_colour	colour;
 	float		radius;
 	float		height;
@@ -120,6 +119,9 @@ int		end_event(t_minirt *mrt);
 int		key_input(int keycode, t_minirt *mrt);
 t_camera	create_camera_ray(t_camera *camera, t_vec2 *pixel);
 void	render(t_minirt *mrt);
+void	add_ambient_light(t_colour *colour, float light_intensity);
+float	ray_intersects_sphere(t_minirt *mrt, t_camera *camera_ray, int object_id);
+void	light_diffusion(t_colour *colour, t_vec3 normal, t_vec3 light_direction);
 
 /**** vector_math ****/
 void	vec3_normalise(t_vec3 *vector);
@@ -129,5 +131,9 @@ t_vec3	vec3_crossproduct(t_vec3 *a, t_vec3 *b);
 t_vec3	vec3_multiply(t_vec3 *a, float value);
 float	vec3_dot(t_vec3 *a, t_vec3 *b);
 t_vec3	vec3_scale(t_vec3 *a, float scale);
+t_vec3	vec3_project(t_vec3 *a, t_vec3 *b);
+
+float	ray_intersects_plane(t_camera *ray, t_object *plane);
+float	ray_intersects_cylinder(t_camera *ray, t_object *cylinder);
 
 #endif

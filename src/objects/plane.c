@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/30 09:10:07 by jingwu            #+#    #+#             */
-/*   Updated: 2024/12/30 14:55:15 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/02 13:40:13 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,16 +33,24 @@
 
 	Because the shape is plane, so if there are intersections, it will be just
 	one.
+
+	@return value
+	-1: when there are no intersections or intersection is behind of the light
+	t: when there is a intersection.
 */
-int	intersect_plane(t_ray *ray, t_object *plane, float *t)
+float	ray_intersects_plane(t_camera *ray, t_object *plane)
 {
-	float	denominator;
 	t_vec3	plane_to_ray;
+	float	denominator;
+	float	t;
 
 	denominator = vec3_dot(&(plane->orientation), &(ray->direction));
 	if (fabsf(denominator) < 1e-6)
-		return (0);
-	oc = vec3_subtract(&(plane->position), &(ray->position));
-	*t = dot(&oc, &(plane->orientation)) / denominator;
-	return (*t >= 0);
+		return (-1);
+	plane_to_ray = vec3_subtract(&(plane->position), &(ray->position));
+	t = vec3_dot(&plane_to_ray, &(plane->orientation)) / denominator;
+	if (t > 0)
+		return (t);
+	else
+		return (-1);
 }

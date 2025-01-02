@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   vector_math.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/12 10:51:45 by arissane          #+#    #+#             */
-/*   Updated: 2024/12/20 14:42:08 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/02 10:41:44 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,14 @@ t_vec3	vec3_scale(t_vec3 *vector, float scale)
 	result.y = vector->y * scale;
 	result.z = vector->z * scale;
 	return (result);
+}
+
+/*
+	@function
+	Caluate the project of vector a on vector b. Using when caculating the
+	ray intersection of cylinder.
+*/
+t_vec3	vec3_project(t_vec3 *a, t_vec3 *b)
+{
+	return vec3_scale(b, vec3_dot(a, b)/vec3_dot(b,b));
 }

@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   read.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 12:48:12 by arissane          #+#    #+#             */
-/*   Updated: 2024/12/19 15:11:55 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/02 11:08:47 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "include/minirt.h"
+#include "minirt.h"
 
 static void	free_array(char **array)
 {
@@ -89,19 +89,19 @@ int	validate_decimal_string(char *str)
 	return (0);
 }
 
-int	validate_number_array(char **array, int type)
+int	validate_number_array(char **array, t_shape type)
 {
 	int	i;
 
 	i = 0;
 	while (array[i])
 	{
-		if (type == 1)
+		if (type == PLANE)
 		{
 			if (validate_number_string(array[i]) == 1)
 				return (1);
 		}
-		if (type == 2)
+		if (type == SPHERE)
 		{
 			if (validate_decimal_string(array[i]) == 1)
 				return (1);
@@ -352,7 +352,7 @@ int	check_sphere_data(t_minirt *mrt, char **values)
 		i++;
 	if (i != 4)
 		return(write_error("Invalid number of variables for a sphere"));
-	sphere.type = SPHERE;
+	sphere.shape = SPHERE;
 	coordinates = ft_split(values[1], ',');
 	i = 0;
 	while (coordinates[i])
@@ -404,7 +404,7 @@ int	check_plane_data(t_minirt *mrt, char **values)
 		i++;
 	if (i != 4)
 		return(write_error("Invalid number of variables for a plane"));
-	plane.type = PLANE;
+	plane.shape = PLANE;
 	coordinates = ft_split(values[1], ',');
 	i = 0;
 	while (coordinates[i])
@@ -466,7 +466,7 @@ int	check_cylinder_data(t_minirt *mrt, char **values)
 		i++;
 	if (i != 6)
 		return(write_error("Cylinder; invalid number of variables"));
-	cylinder.type = CYLINDER;
+	cylinder.shape = CYLINDER;
 	coordinates = ft_split(values[1], ',');
 	i = 0;
 	while (coordinates[i])

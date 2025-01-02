@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+         #
+#    By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/04 10:50:10 by arissane          #+#    #+#              #
-#    Updated: 2024/12/12 14:52:03 by arissane         ###   ########.fr        #
+#    Updated: 2025/01/02 13:51:48 by jingwu           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,32 +15,57 @@ NAME = miniRT
 CC = cc
 CFLAGS = -Wall -Werror -Wextra
 
+# miniLibX
+MLX_URL = https://github.com/42Paris/minilibx-linux.git
+MLX_DIR = ./minilibx-linux
+MLX = -L ./$(MLX_DIR)
+
 LIBFT = libft/libft.a
 MLX = minilibx-linux/libmlx.a
 LIBS = -lXext -lX11 -lm
+HEADER = -I./include -I./libft -I ./$(MLX_DIR)
 
+SRCS_DIR = src
+SRCS_SUDIR = objects
+VPATH = $(SRCS_DIR) $(addprefix $(SRCS_DIR)/, $(SRCS_SUDIR))
 SRCS = main.c \
-       scene.c \
+       read.c \
        render.c \
+       camera_ray.c \
+       light_source.c \
+       ambient_light.c \
        free.c \
+       input.c \
        vector_math.c\
+	   plane.c \
+	   sphere.c \
+	   cylinder.c \
 
-OFILES = $(SRCS:.c=.o)
+OBJS_DIR = ./obj
+OBJS = $(patsubst %.c, $(OBJS_DIR)/%.o, $(SRCS))
 
-%.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+all: clone $(NAME)
 
-all: $(NAME)
+clone:
+	@if [ ! -d "$(MLX_DIR)" ]; then \
+		git clone $(MLX_URL); \
+	fi
 
-$(NAME): $(OFILES)
+$(NAME): $(OBJS_DIR) $(OBJS)
 	@$(MAKE) -C ./libft
 	@$(MAKE) -C ./minilibx-linux
-	@$(CC) $(CFLAGS) $(OFILES) $(LIBFT) $(MLX) $(LIBS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(OBJS) $(LIBFT) $(MLX) $(LIBS) -o $(NAME)
+
+$(OBJS_DIR):
+	@mkdir -p $(OBJS_DIR)
+
+$(OBJS_DIR)/%.o: %.c
+	@$(CC) $(CFLAGS) $(HEADER) -c $< -o $@
 
 clean:
 	@$(MAKE) -C ./libft clean
 	@$(MAKE) -C ./minilibx-linux clean
-	@rm -f $(OFILES)
+	@rm -rf $(OBJS_DIR)
 
 fclean: clean
 	@rm -f $(NAME) ./libft/libft.a
