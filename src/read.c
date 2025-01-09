@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 12:48:12 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/02 11:08:47 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/09 13:47:44 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,6 +239,9 @@ int	check_camera_data(t_minirt *mrt, char **values)
 	if (mrt->camera.direction.x > 1.0 || mrt->camera.direction.x < -1.0 || mrt->camera.direction.y > 1.0 || mrt->camera.direction.y < -1.0 || mrt->camera.direction.z > 1.0 || mrt->camera.direction.z < -1.0)
 		return (write_error("Camera orientation values should be within a range from -1.0 to 1.0"));
 	free_array(direction);
+
+	mrt->camera.rotation = vec3_to_quaternion(&mrt->camera.direction);
+
 	mrt->camera.fov = ft_atoi(values[3]);
 	if (mrt->camera.fov < 0 || mrt->camera.fov > 180)
 		return (write_error("Camera FOV should be within the range of 0 to 180"));
@@ -252,10 +255,10 @@ int	check_camera_data(t_minirt *mrt, char **values)
 
 	up.x = 0;
 	up.y = 1;
-	up.z = -0.1;
+	up.z = -0.000001;
 
-	mrt->camera.right = vec3_crossproduct(&mrt->camera.direction, &up);
-	mrt->camera.up = vec3_crossproduct(&mrt->camera.right, &mrt->camera.direction);
+	mrt->camera.right = vec3_crossproduct(mrt->camera.direction, up);
+	mrt->camera.up = vec3_crossproduct(mrt->camera.right, mrt->camera.direction);
 	vec3_normalise(&mrt->camera.up);
 	return (0);
 }
@@ -432,6 +435,8 @@ int	check_plane_data(t_minirt *mrt, char **values)
 		return (write_error("Plane orientation values should be within a range from -1.0 to 1.0"));
 	free_array(orientation);
 
+	plane.rotation = vec3_to_quaternion(&plane.orientation);
+
 	colours = ft_split(values[3], ',');
 	i = 0;
 	while (colours[i])
@@ -495,6 +500,8 @@ int	check_cylinder_data(t_minirt *mrt, char **values)
 		return (write_error("Cylinder orientation values should be within a range from -1.0 to 1.0"));
 	free_array(orientation);
 
+	cylinder.rotation = vec3_to_quaternion(&cylinder.orientation);
+
 	if (validate_decimal_string(values[3]) == 1)
 		return (write_error("Syntax error; cylinder diameter should be a decimal number"));
 	cylinder.radius = ft_atofloat(values[3]);
@@ -520,6 +527,8 @@ int	check_cylinder_data(t_minirt *mrt, char **values)
 		return (write_error("Plane; the colour values should be in the range from 0 to 255"));
 	free_array(colours);
 	mrt->object[mrt->object_count - 1] = cylinder;
+	cylinder.cap_t = vec3_add(cylinder.position, vec3_scale(cylinder.orientation, cylinder.height * 0.5));
+	cylinder.cap_b = vec3_add(cylinder.position, vec3_scale(cylinder.orientation, -cylinder.height * 0.5));
 	return (0);
 }
 

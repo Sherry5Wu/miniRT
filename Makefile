@@ -6,7 +6,7 @@
 #    By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/04 10:50:10 by arissane          #+#    #+#              #
-#    Updated: 2025/01/02 13:51:48 by jingwu           ###   ########.fr        #
+#    Updated: 2025/01/08 14:35:06 by arissane         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,11 +32,13 @@ SRCS = main.c \
        read.c \
        render.c \
        camera_ray.c \
-       light_source.c \
+       light_diffusion.c \
        ambient_light.c \
        free.c \
        input.c \
-       vector_math.c\
+       spherical_linear_interpolation.c \
+       vector_math.c \
+       vector4_math.c \
 	   plane.c \
 	   sphere.c \
 	   cylinder.c \

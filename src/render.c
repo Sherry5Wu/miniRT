@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:39:02 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/02 13:41:03 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/08 10:02:06 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,22 +41,7 @@ int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 	int		i;
 	int		object_id;
 	int		found_object;
-	t_vec3		intersection;
-	t_vec3		intersection_normal;
-	t_vec3		scaled;
-//	float	normal_x;
-//	float	normal_y;
 
-//test version without data from rt file:
-//	normal_x = (2 * (pixel->x + 0.5) / WIN_WIDTH) - 1;
-//	normal_y = (2 * (pixel->y + 0.5) / WIN_HEIGHT) - 1;
-//	camera_ray.direction.x = normal_x;
-//	camera_ray.direction.y = normal_y;
-//	camera_ray.direction.z = mrt->camera.direction.z;
-//	vec3_normalise(&camera_ray.direction);
-
-//check if there is a sphere, since only spheres can be calculated currently
-//this need to be changed to a function that finds the closest object once we have functions for planes and cylinders as well
 	i = 0;
 	t = -1;
 	object_id = 0;
@@ -66,7 +51,7 @@ int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 	{
 		if (mrt->object[i].shape == PLANE)
 		{
-			t_temp = ray_intersects_plane(mrt, &camera_ray, i);
+			t_temp = ray_intersects_plane(&camera_ray, &mrt->object[i]);
 			if (t_temp > 0 && (t_temp < t || t == -1))
 			{
 				object_id = i;
@@ -76,7 +61,7 @@ int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 		}
 		else if (mrt->object[i].shape == SPHERE)
 		{
-			t_temp = ray_intersects_sphere(mrt, &camera_ray, i);
+			t_temp = ray_intersects_sphere(&camera_ray, &mrt->object[i]);
 			if (t_temp > 0 && (t_temp < t || t == -1))
 			{
 				object_id = i;
@@ -86,7 +71,7 @@ int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 		}
 		else if (mrt->object[i].shape == CYLINDER)
 		{
-			t_temp = ray_intersects_cylinder(mrt, &camera_ray, i);
+			t_temp = ray_intersects_cylinder(&camera_ray, &mrt->object[i]);
 			if (t_temp > 0 && (t_temp < t || t == -1))
 			{
 				object_id = i;
@@ -102,13 +87,8 @@ int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 	if (t > 0)
 	{
 		check_base_colour(&mrt->object[object_id], &colour, t);
-
-		scaled = vec3_scale(&camera_ray.direction, t);
-		intersection = vec3_add(&mrt->camera.position, &scaled);
-		intersection_normal = vec3_subtract(&intersection, &mrt->object[object_id].position);
-		vec3_normalise(&intersection_normal);
-		light_diffusion(&colour, intersection_normal, mrt->light.position);
-
+		//light_diffusion can be removed after ray tracing is done
+		light_diffusion(mrt, &camera_ray, &mrt->object[object_id], &colour, t);
 		add_ambient_light(&colour, mrt->ambient.brightness);
 		return((colour.red << 16) | (colour.green << 8) | colour.blue);
 	}
