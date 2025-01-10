@@ -25,6 +25,7 @@
 # define WIN_WIDTH 1200
 # define WIN_HEIGHT 1200
 # define DIFFER	(1e-6)
+# define VEC_MIN (t_vec3){0.0001, 0.0001, 0.0001}
 
 // # define PLANE 1
 // # define SPHERE 2
@@ -99,6 +100,7 @@ typedef struct s_equation
 typedef struct s_object
 {
 	t_shape		shape;
+	int			id;//added by sherry. need to init the value at beginning.
 	t_vec3		position;
 	t_vec3		orientation;
 	t_vec4		rotation;
@@ -163,6 +165,7 @@ float	ray_intersects_cylinder(t_camera *ray, t_object *cylinder);
 void	light_diffusion(t_minirt *mrt, t_camera *camera_ray, t_object *object, t_colour *colour, float t);
 t_vec4	spherical_linear_interpolation(t_vec4 *q1, t_vec4 *q2, float t);
 t_vec4	angle_to_quaternion(t_vec3 *axis, float angle);
+bool	is_intersected(t_camera *ray, t_object *ob, float *t);
 
 /**** vector_math ****/
 void	vec3_normalise(t_vec3 *vector);
