@@ -141,9 +141,9 @@ float	solve_equation(t_equation *eq)
 }
 static float	find_smaller_positive(float t1,  float t2)
 {
-	if (t1 >= t2 && t2 > 0)
+	if (t1 > t2 && t2 > 0)
 		return (t2);
-	else if (t2 >= t1 && t1 > 0)
+	else if (t2 > t1 && t1 > 0)
 		return (t1);
 	else if (t1 < 0 && t2 < 0)
 		return (-1);
@@ -169,17 +169,15 @@ static float	hit_check_cylinder(t_camera *ray, t_object *cy, t_equation *eq)
 	smallest_t = -1;
 	t1 = intersects_cylinder_side(ray, cy, eq->t1);
 	t2 = intersects_cylinder_side(ray, cy, eq->t2);
-	smallest_t = find_smaller_positive(t1, t2);
 	if (t1 == -1 || t2 == -1)
 	{
+		smallest_t = find_smaller_positive(t1, t2);
 		t1 = intersects_cylinder_cap(ray, cy, cy->cap_t);// top
-		// if (t1 > 0 && smallest_t > t1)
-		// 	smallest_t = t1;
-		smallest_t = find_smaller_positive(t1, smallest_t);
+		if (t1 > 0 && smallest_t < t1)
+			smallest_t = t1;
 		t2 = intersects_cylinder_cap(ray, cy, cy->cap_b);// bottom
-		// if (t2 > 0 && smallest_t > t2)
-		// 	smallest_t = t2;
-		smallest_t = find_smaller_positive(t2, smallest_t);
+		if (t2 > 0 && smallest_t < t2)
+			smallest_t = t2;
 	}
 	if (smallest_t < 0)
 		return (-1);

@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/30 09:10:07 by jingwu            #+#    #+#             */
-/*   Updated: 2025/01/08 11:13:34 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/15 13:45:02 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ float	ray_intersects_plane(t_camera *ray, t_object *plane)
 	float	t;
 
 	denominator = vec3_dot((plane->orientation), (ray->direction));
-	if (fabsf(denominator) < DIFFER)
+	if (fabsf(denominator) < EPSILON)
 		return (-1);
 	plane_to_ray = vec3_subtract(plane->position, ray->position);
 	t = vec3_dot(plane_to_ray, (plane->orientation)) / denominator;

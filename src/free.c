@@ -6,11 +6,24 @@
 /*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:15:56 by arissane          #+#    #+#             */
-/*   Updated: 2024/12/09 10:24:50 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/13 13:10:14 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
+
+void	free_array(char **array)
+{
+	int	i;
+
+	i = 0;
+	while (array[i])
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+}
 
 void	free_window(t_minirt *mrt)
 {

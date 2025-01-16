@@ -1,5 +1,0 @@
-function shade_hit(world, comps)
-  return lighting(comps.object.material,
-                  world.light,
-                  comps.point, comps.eyev, comps.normalv)
-end function

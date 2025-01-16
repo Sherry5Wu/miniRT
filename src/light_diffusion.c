@@ -6,50 +6,48 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/03 11:30:47 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/08 11:29:09 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/15 14:02:31 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-static void	add_diffusion_multiplier(t_colour *colour, t_vec3 normal, t_vec3 light_direction)
+static t_vec3	get_hit_normal(t_object *ob, t_vec3 hit_point, t_vec3 l_dir)
 {
-	float	diffusion;
+	t_vec3	normal;
 
-	diffusion = vec3_dot(normal, light_direction);
-	if (diffusion < 0.0f)
-		diffusion = 0.0f;
-	colour->red = (int)(colour->red * diffusion);
-	colour->green = (int)(colour->green * diffusion);
-	colour->blue = (int)(colour->blue * diffusion);
-	if (colour->red > 255)
-		colour->red = 255;
-	if (colour->green > 255)
-		colour->green = 255;
-	if (colour->blue > 255)
-		colour->blue = 255;
+	if (ob->shape == PLANE)
+	{
+		if (vec3_dot(ob->orientation, l_dir) <= 0)
+			normal = vec3_scale(ob->orientation, -1);
+		else
+			normal = ob->orientation;
+	}
+	else if (ob->shape == SPHERE)
+		normal = vec3_subtract(hit_point, ob->position);
+	else
+		normal = ob->cy_hit_normal;
+	vec3_normalise(&normal);
+	return (normal);
 }
 
-void	light_diffusion(t_minirt *mrt, t_camera *camera_ray, t_object *object, t_colour *colour, float t)
+float	diffusion(t_minirt *mrt, t_camera *c_ray, t_object *ob, float t)
 {
-	t_vec3		intersection;
-	t_vec3		intersection_normal;
-	t_vec3		scaled;
+	t_vec3	hit_point;// position
+	t_vec3	light_dir; // vector
+	float	attenuation;
+	float	cos_angle;
+	t_vec3	hit_normal;
+	float	diffuse_ratio;
 
-	scaled = vec3_scale(camera_ray->direction, t);
-	intersection = vec3_add(mrt->camera.position, scaled);
-	if (object->shape == PLANE)
-		intersection_normal = object->orientation;
-	else if (object->shape == SPHERE)
-	{
-		intersection_normal = vec3_subtract(intersection, object->position);
-		vec3_normalise(&intersection_normal);
-	}
-	else
-	{
-		intersection.y = 0;
-		intersection_normal = vec3_subtract(intersection, object->position);
-		vec3_normalise(&intersection_normal);
-	}
-	add_diffusion_multiplier(colour, intersection_normal, mrt->light.position);
+	hit_point = vec3_add(c_ray->position, vec3_scale(c_ray->direction, t));
+	light_dir = vec3_subtract(mrt->light.position, hit_point);
+	attenuation = fmin(1.0, 60.0 / vec3_length(light_dir));
+	vec3_normalise(&light_dir);
+	hit_normal = get_hit_normal(ob, hit_point, light_dir);
+	cos_angle = vec3_cosine(hit_normal, light_dir);
+	if (cos_angle <= 0)
+		return (0);
+	diffuse_ratio = mrt->light.brightness * cos_angle * attenuation;
+	return (diffuse_ratio);
 }

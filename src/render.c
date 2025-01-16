@@ -6,20 +6,23 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:39:02 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/09 15:03:04 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/15 14:02:42 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-//change the colour with a multiplier of the distance from the camera and clamp it to a range of 0-255
+/**
+ *  @brief
+ * 	change the colour with a multiplier of the distance from the camera and
+ * 	clamp it to a range of 0-255
+ */
 void	check_base_colour(t_object *object, t_colour *col, float t)
 {
 	float	depth;
 	float	max_distance = 500.0f;
 
 	depth = expf(-t / max_distance);//exponential decay
-//	depth = 1.0f / (1.0f * t);//direct inverse decay
 	col->red = (object->colour.red * depth);
 	col->green = (object->colour.green * depth);
 	col->blue = (object->colour.blue * depth);
@@ -30,89 +33,122 @@ void	check_base_colour(t_object *object, t_colour *col, float t)
 	if (col->blue > 255)
 		col->blue = 255;
 }
-
-// int	hitpoint_to_lightsource(t_minirt *mrt, t_camera *camera_ray, float t)
+/**
+ * 	@brief
+ * 	To check if between the light and the intersection(hit_point), there are
+ * 	another objects or not. If there is one, then the intersection is obscured;
+ * 	otherwise, it isn't obscured.
+ *
+ * 	@details
+ * 	1. get the light_ray's position and direction(normal);
+ * 	2. get the distance between the intersection and the light;
+ * 	3. Loop the objects in the scene, if the current the ob is the inter_ob,
+ * 	   then continue; otherwise, using is_intersected function to check if
+ * 	   there is a intersection , and the distance to the light is shorter than
+ * 	   the checked_intersection, then it is obscured.
+ *
+ * 	@return
+ * 	true : it is obsucred;
+ * 	false: it is not obscured;
+ */
+bool	is_obscured_from_hitpoint_to_light(t_object *ob, t_minirt *mrt,
+	t_camera *c_ray, float t)
 {
-	t_vec3	intersection;
-	float	object_to_light_distance;
-
-	//added this mainly so that mrt is used in this incomplete function
-	if (mrt->object_count == 0)
-		return (1);
-	//calculate camera ray and object intersection point
-	intersection = vec3_add(camera_ray->position, vec3_scale(camera_ray->direction, t));
-	//add a function to calculate if the ray from the intersection is able to reach the light, or does it hit an object first. We can also return the length instead of int 1 or 0
-	object_to_light_distance = 1.0f;
-	if (object_to_light_distance > 0.0f)
-		return (1);
-	return (0);
+	t_vec3		hit_p;
+	t_camera	light_ray;
+	float		distance;
+	int			i;
+	(void)ob;
+	i = -1;
+	hit_p = vec3_add(c_ray->position, vec3_scale(c_ray->direction, t));
+	light_ray.position = vec3_add(hit_p, VEC_MIN);
+	light_ray.direction = vec3_subtract(mrt->light.position, hit_p);
+	vec3_normalise(&light_ray.direction);
+	distance = vec3_length(vec3_subtract(mrt->light.position, hit_p));
+	while (++i < mrt->object_count)
+	{
+		if (mrt->object[i].id == ob->id)
+			continue ;
+		if (is_intersected(&light_ray, &mrt->object[i], &distance) == true
+			&& distance <
+				vec3_length(vec3_subtract(mrt->light.position, hit_p)))
+			return (true);
+	}
+	return (false);
+}
+/**
+ * 	@brief
+ * 	To check if the ray with the passed shape has intersections. If there are
+ * 	intersections, then save the closest distance t into *t.
+ *
+ * @return
+ * 	true: there is intersection;
+ * 	alse: no intersections;
+ */
+bool	is_intersected(t_camera *ray, t_object *ob, float *t)
+{
+	if (ob->shape == PLANE)
+		*t = ray_intersects_plane(ray, ob);
+	else if (ob->shape == SPHERE)
+		*t = ray_intersects_sphere(ray, ob);
+	else if (ob->shape == CYLINDER)
+		*t = ray_intersects_cylinder(ray, ob);
+	if (*t > 0)
+		return (true);
+	return (false);
 }
 
-//Check what colour the pixel should be depending on if and how the camera rays hit the object
+static void	check_intersection(t_minirt *mrt, t_camera *camera_ray,
+	float *t, int *object_id)
+{
+	int	i;
+	float	t_temp;
+
+	i = -1;
+	t_temp = -1;
+	while (++i < mrt->object_count)
+	{
+		if (is_intersected(camera_ray, &mrt->object[i], &t_temp) == true
+			&& (t_temp < *t || *t == -1))
+		{
+			*object_id = i;
+			*t = t_temp;
+		}
+	}
+}
+
+/**
+ *  @brief
+ * 	Check what colour the pixel should be depending on if and how the camera
+ * 	rays hit the object
+ */
 int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 {
 	t_camera	camera_ray;
 	t_colour	colour;
 	float		t;
-	float		t_temp;
 	int		i;
 	int		object_id;
-	int		found_object;
+	float	intensity;
 
-	i = 0;
+	i = -1;
 	t = -1;
 	object_id = 0;
-	found_object = 0;
+	intensity = 0;
 	camera_ray = create_camera_ray(&mrt->camera, pixel);
-	while (i < mrt->object_count)
-	{
-		if (mrt->object[i].shape == PLANE)
-		{
-			t_temp = ray_intersects_plane(&camera_ray, &mrt->object[i]);
-			if (t_temp > 0 && (t_temp < t || t == -1))
-			{
-				object_id = i;
-				t = t_temp;
-			}
-			found_object++;
-		}
-		else if (mrt->object[i].shape == SPHERE)
-		{
-			t_temp = ray_intersects_sphere(&camera_ray, &mrt->object[i]);
-			if (t_temp > 0 && (t_temp < t || t == -1))
-			{
-				object_id = i;
-				t = t_temp;
-			}
-			found_object++;
-		}
-		else if (mrt->object[i].shape == CYLINDER)
-		{
-			t_temp = ray_intersects_cylinder(&camera_ray, &mrt->object[i]);
-			if (t_temp > 0 && (t_temp < t || t == -1))
-			{
-				object_id = i;
-				t = t_temp;
-			}
-			found_object++;
-		}
-		i++;
-	}
-	if (found_object == 0)
-		return (0x000000);
-
+	check_intersection(mrt, &camera_ray, &t, &object_id);
 	if (t > 0)
 	{
 		check_base_colour(&mrt->object[object_id], &colour, t);
-		//if the ray from the object reaches the light source, add light multiplier
-		if (hitpoint_to_lightsource(mrt, &camera_ray, t) == 1)
-			light_diffusion(mrt, &camera_ray, &mrt->object[object_id], &colour, t);
-		add_ambient_light(&colour, mrt->ambient.brightness);
+		if (is_obscured_from_hitpoint_to_light(&mrt->object[object_id],
+			mrt, &camera_ray, t) == false)
+			intensity = diffusion(mrt, &camera_ray, &mrt->object[object_id],t);
+		intensity += mrt->ambient.brightness;
+		modulate_colour(&colour, intensity);
 		return((colour.red << 16) | (colour.green << 8) | colour.blue);
 	}
 	return (0x000000);
 }
-
 
 //Add the colour to the image based on it's data address
 static void	put_pixel(t_minirt *mrt, t_vec2 *pixel, int colour)

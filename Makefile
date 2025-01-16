@@ -6,7 +6,7 @@
 #    By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/04 10:50:10 by arissane          #+#    #+#              #
-#    Updated: 2025/01/08 14:35:06 by arissane         ###   ########.fr        #
+#    Updated: 2025/01/15 09:42:56 by jingwu           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,14 +26,19 @@ LIBS = -lXext -lX11 -lm
 HEADER = -I./include -I./libft -I ./$(MLX_DIR)
 
 SRCS_DIR = src
-SRCS_SUDIR = objects
+SRCS_SUDIR = objects debug
 VPATH = $(SRCS_DIR) $(addprefix $(SRCS_DIR)/, $(SRCS_SUDIR))
 SRCS = main.c \
-       read.c \
+       read_rt_file.c \
+       read_rt_lights_camera.c \
+       read_rt_object_data.c \
+       read_rt_add_values.c \
+       validate_number_array.c \
+       utils.c \
        render.c \
        camera_ray.c \
        light_diffusion.c \
-       ambient_light.c \
+       modulate_colour.c \
        free.c \
        input.c \
        spherical_linear_interpolation.c \

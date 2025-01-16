@@ -1,3 +1,0 @@
-function local_normal_at(cylinder, point)
-  return vector(point.x, 0, point.z)
-end function
