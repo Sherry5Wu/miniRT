@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 11:03:10 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/15 11:11:27 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/24 09:09:20 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,9 @@ static void	set_camera_default_orientation(t_minirt *mrt)
 	up.x = 0;
 	up.y = 1;
 	up.z = -EPSILON;
+	vec3_normalise(&up);
 	mrt->camera.right = vec3_crossproduct(mrt->camera.direction, up);
+	vec3_normalise(&mrt->camera.right);
 	mrt->camera.up = vec3_crossproduct(mrt->camera.right,
 			mrt->camera.direction);
 	vec3_normalise(&mrt->camera.up);
@@ -36,15 +38,10 @@ static void	set_camera_default_orientation(t_minirt *mrt)
 
 int	check_ambient_data(t_minirt *mrt, char **values)
 {
-	int	i;
-
-	i = 0;
 	mrt->ambient_count++;
 	if (mrt->ambient_count > 1)
 		return (write_error("Number of ambient lighting exceeds 1"));
-	while (values[i])
-		i++;
-	if (i != 3)
+	if (check_number_of_variables(values, 3, 3) == 1)
 		return (write_error("Invalid number of variables for "
 				"ambient lighting"));
 	if (validate_decimal_string(values[1]) == 1)
@@ -62,15 +59,10 @@ int	check_ambient_data(t_minirt *mrt, char **values)
 
 int	check_camera_data(t_minirt *mrt, char **values)
 {
-	int	i;
-
-	i = 0;
 	mrt->camera_count++;
 	if (mrt->camera_count > 1)
 		return (write_error("Number of cameras exceeds 1"));
-	while (values[i])
-		i++;
-	if (i != 4)
+	if (check_number_of_variables(values, 4, 4) == 1)
 		return (write_error("Invalid number of variables for the camera"));
 	if (add_xyz_values(&mrt->camera.position, values[1],
 			"Camera coordinates ", 1) == 1)
@@ -91,15 +83,10 @@ int	check_camera_data(t_minirt *mrt, char **values)
 
 int	check_light_data(t_minirt *mrt, char **values)
 {
-	int	i;
-
-	i = 0;
 	mrt->light_count++;
 	if (mrt->light_count > 1)
 		return (write_error("Number of lights exceeds 1"));
-	while (values[i])
-		i++;
-	if (i < 3 || i > 4)
+	if (check_number_of_variables(values, 3, 4) == 1)
 		return (write_error("Invalid number of variables for the light"));
 	if (add_xyz_values(&mrt->light.position, values[1],
 			"Light coordinates ", 1) == 1)
@@ -108,6 +95,9 @@ int	check_light_data(t_minirt *mrt, char **values)
 		return (write_error("Syntax error; the light brightness "
 				"ratio should be a decimal number"));
 	mrt->light.brightness = ft_atofloat(values[2]);
+	if (mrt->light.brightness > 1.0 || mrt->light.brightness < 0.0)
+		return (write_error("Light brightness should be in the "
+				"range from 0.0 to 1.0"));
 	if (values[3])
 	{
 		if (add_colour_values(&mrt->light.colour, values[3], "Light ") == 1)

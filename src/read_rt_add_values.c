@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_rt_add_values.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 11:00:06 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/14 11:09:07 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/22 10:32:24 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,18 @@ static int	write_error2(char *target, char *message)
 	ft_putstr_fd(message, 2);
 	ft_putchar_fd('\n', 2);
 	return (1);
+}
+
+int	check_number_of_variables(char **values, int min, int max)
+{
+	int		i;
+
+	i = 0;
+	while (values[i])
+		i++;
+	if (i < min || i > max)
+		return (1);
+	return (0);
 }
 
 int	add_colour_values(t_colour *colour, char *str, char *target)

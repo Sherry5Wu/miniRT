@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 13:11:38 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/13 13:28:04 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/23 08:57:56 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,21 @@ int	write_error(char *str)
 	ft_putstr_fd("Error!\n", 2);
 	ft_putstr_fd(str, 2);
 	ft_putchar_fd('\n', 2);
+	return (1);
+}
+
+int	read_close_return(int fd)
+{
+	char	*line;
+
+	while (1)
+	{
+		line = get_next_line(fd);
+		if (!line)
+			break ;
+		free(line);
+	}
+	close(fd);
 	return (1);
 }
 

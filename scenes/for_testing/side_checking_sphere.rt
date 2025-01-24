@@ -1,0 +1,22 @@
+A 0.3             200,200,200
+
+
+# camera and light are outside of sphere
+# C 8,0,-3    0,0.0,1         90
+# L 6,0,10                    1.0     100,100,100
+# sp 0,0,0                    2.0     0,80,180
+
+# camera and light both are inside of sphere
+# C 2,0,-3    0,0.0,1         90
+# L 3,0,1                    1.0     100,100,100
+# sp 0,0,0                    10.0     0,80,180
+
+# camera is inside , light is outside
+# C 2,0,0    0,0.0,1         90
+# L 6,0,1                    1.0     100,100,100
+# sp 0,0,0                    6.0     0,80,180
+
+# light is inside , camera is outside
+C 4,0,0    0,0.0,1         90
+L 2,0,1                    1.0     100,100,100
+sp 0,0,0                    6.0     0,80,180

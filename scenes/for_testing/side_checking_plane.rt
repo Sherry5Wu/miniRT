@@ -1,0 +1,37 @@
+A 0.2									200,200,200
+
+# 1. Plane, camera, and Light at same postion
+C 0,10,0  		0,0,-1.0		90
+L -3,5,0 				0.9		255,255,255
+pl 0,0,0 			0,1,0 				255,255,0
+
+#2. Light and camera are at the front side of the plane.
+# C  0,6,5  		0,0,1		70
+# L  0,5,0 					0.5		255,255,255
+# pl 0,0,0 		0,1,0 				255,255,0
+
+# 2. Light and camera are at the back side of the plane.
+# C  0,-6,5  		0,0,1		70
+# L  0,-5,0 					0.5		255,255,255
+# pl 0,0,0 		0,1,0 				255,255,0
+
+
+# 3. Light is at front side, camera is at the back side
+# C  0,-6,5  		0,0,1		80
+# L  0,5,0 					0.5		255,255,255
+# pl 0,0,0 		0,1,0 				255,255,0
+
+# 4. Light is at back side, camera is at the front side
+# C  0,-6,5  		0,0,1		80
+# L  0,5,0 					0.5		255,255,255
+# pl 0,0,0 		0,-1,0 				255,255,0
+
+# light is in the plane
+# C  0,6,5  		0,0,1		80
+# L  0,0,0 					0.5		255,255,255
+# pl 0,0,0 		0,1,0 				255,255,0
+
+# C  0,0,0  		0,0,1		80
+# L  0,5,0 					0.5		255,255,255
+# pl 10,0,0 		0,1,0 				255,255,0
+

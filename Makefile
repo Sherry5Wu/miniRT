@@ -6,7 +6,7 @@
 #    By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/04 10:50:10 by arissane          #+#    #+#              #
-#    Updated: 2025/01/15 09:42:56 by jingwu           ###   ########.fr        #
+#    Updated: 2025/01/24 11:44:23 by jingwu           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ LIBS = -lXext -lX11 -lm
 HEADER = -I./include -I./libft -I ./$(MLX_DIR)
 
 SRCS_DIR = src
-SRCS_SUDIR = objects debug
+SRCS_SUDIR = intersection debug render
 VPATH = $(SRCS_DIR) $(addprefix $(SRCS_DIR)/, $(SRCS_SUDIR))
 SRCS = main.c \
        read_rt_file.c \
@@ -36,17 +36,26 @@ SRCS = main.c \
        validate_number_array.c \
        utils.c \
        render.c \
+       calculate_colour.c \
+       trace_ray.c \
        camera_ray.c \
        light_diffusion.c \
-       modulate_colour.c \
        free.c \
        input.c \
-       spherical_linear_interpolation.c \
-       vector_math.c \
+       object_controls.c \
+       light_controls.c \
+       camera_controls.c \
+       vector3_math.c \
+       vector3_math2.c \
        vector4_math.c \
+       vector4_conversions.c \
 	   plane.c \
 	   sphere.c \
 	   cylinder.c \
+          intersects_cylinder_side.c \
+       set_camera_light_position_info_for_objects.c \
+       read_rt_object_allocate_memory.c \
+       camera_controls_matrix.c
 
 OBJS_DIR = ./obj
 OBJS = $(patsubst %.c, $(OBJS_DIR)/%.o, $(SRCS))

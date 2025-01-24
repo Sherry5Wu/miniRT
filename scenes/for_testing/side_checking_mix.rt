@@ -1,0 +1,11 @@
+A 0.3             200,200,200
+
+
+# Sphere: camera and light are outside
+# Cylinder : camera and light are outside
+# Plane: camera is at bottom, light is at the top
+C 8,-1,-3    0,0.0,1         90
+L 6,1,10                    1.0     100,100,100
+sp 0,0,0                    2.0     0,80,180
+cy 0,0,0    0,1,0    3   5          0,40,180
+pl 0,0,0    0,1,0                   200,80,80

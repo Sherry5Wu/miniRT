@@ -6,37 +6,54 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:53:49 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/15 10:50:14 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/24 09:29:10 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
 
-void	print_controls(void)
+static void	print_controls(void)
 {
-	ft_putstr_fd("Select next object: =\n", 1);
-	ft_putstr_fd("Select previous object: -\n", 1);
-	ft_putstr_fd("Move the object with arrow keys, control and space\n", 1);
-	ft_putstr_fd("Rotate the object's x, y and z axis with ", 1);
-	ft_putstr_fd("J, K, and L respectively\n", 1);
-	ft_putstr_fd("Resize object diameter with < and >\n", 1);
-	ft_putstr_fd("Resize object height with N and M\n", 1);
-	ft_putstr_fd("\nCamera controls:\nMove in x and z axis with W, A, S, D\n", 1);
-	ft_putstr_fd("Up and down with R, F\n", 1);
-	ft_putstr_fd("Rotate with Q, E, Z, X\n", 1);
-	ft_putstr_fd("\nLight controls:\nMove in x and z axis with numpad 8, 4, 5, 6\n", 1);
-	ft_putstr_fd("Up and down with numpad 7, 1\nAdjust brightness with numpad 9, 3\n", 1);
-	ft_putstr_fd("\nAdjust ambient light brightness with  [ and ]\n", 1);
-	ft_putstr_fd("\n*****************************************************\n", 1);
+	ft_putstr_fd(BL"Object controls:\n"RS GR" - Selection:"RS" =/-\n", 1);
+	ft_putstr_fd(GR" - Translation:\n"RS"     * Left/Right: ←/→\n     ", 1);
+	ft_putstr_fd("* Up/Down: Space/Ctrl\n     * Forward/Backward:  ↑/↓\n", 1);
+	ft_putstr_fd(GR" - Rotation\n"RS"     * X-axis: J\n     ", 1);
+	ft_putstr_fd("* Y-axis: K\n     * Z-axis: L\n", 1);
+	ft_putstr_fd(GR" - Resize\n"RS"     * Diameter(-/+): </>\n     ", 1);
+	ft_putstr_fd("* Height(-/+): N/M\n", 1);
+	ft_putstr_fd(BL"\nCamera controls:\n"RS GR" - Translation\n"RS, 1);
+	ft_putstr_fd("     * Left/Right: A/D\n     * Up/Down: R/F\n     ", 1);
+	ft_putstr_fd("* Forward/Backward: W/S\n", 1);
+	ft_putstr_fd(GR" - Rotation\n"RS"     * X-axis(up/down): Z/X\n     ", 1);
+	ft_putstr_fd("* Y-axis(left/right): Q/E\n     * Z-axis(left/right): "
+		"C/V\n", 1);
+	ft_putstr_fd(BL"\nLight controls:\n"RS GR" - Translation\n"RS"     * "
+		"Left/Right: 4/6\n     * Up/Down: 7/1\n     * Forward/Backward: 8/5\n",
+		1);
+	ft_putstr_fd(GR" - Brightness(-/+): "RS"9/3\n\n", 1);
+	ft_putstr_fd(BL"Ambient Light\n"RS GR" - Brightness(-/+):"RS" [/]\n", 1);
+	ft_putstr_fd(BL"\n************************************************\n"RS, 1);
 }
 
-void	initialise(t_minirt *mrt)
+static void	initialise(t_minirt *mrt)
 {
 	mrt->mlx = mlx_init();
 	mrt->win = mlx_new_window(mrt->mlx, WIN_WIDTH, WIN_HEIGHT, "miniRT");
 	mrt->img = mlx_new_image(mrt->mlx, WIN_WIDTH, WIN_HEIGHT);
 	mrt->data_addr = mlx_get_data_addr(mrt->img, &mrt->bits_per_pixel,
 			&mrt->line_length, &mrt->endian);
+}
+
+static int	check_window_size(void)
+{
+	if (WIN_WIDTH < 50 || WIN_WIDTH > 2000 || WIN_HEIGHT < 50
+		|| WIN_HEIGHT > 2000)
+	{
+		ft_putstr_fd("Error\nWindow width/height should be"
+			"between 50 and 2000", 2);
+		return (1);
+	}
+	return (0);
 }
 
 int	main(int argc, char **argv)
@@ -48,6 +65,8 @@ int	main(int argc, char **argv)
 		ft_putstr_fd("Invalid number of arguments", 2);
 		return (1);
 	}
+	if (check_window_size() == 1)
+		return (1);
 	ft_bzero(&mrt, sizeof(t_minirt));
 	if (read_rt_file(&mrt, argv[1]) == 1)
 		return (1);

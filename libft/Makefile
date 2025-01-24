@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+         #
+#    By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/18 11:35:45 by arissane          #+#    #+#              #
-#    Updated: 2024/07/21 11:16:06 by arissane         ###   ########.fr        #
+#    Updated: 2025/01/22 14:51:11 by jingwu           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ SRCS = \
 	   ft_memset.c ft_strchr.c ft_strlen.c ft_substr.c ft_calloc.c ft_itoa.c \
 	   ft_putchar_fd.c ft_strdup.c ft_strmapi.c ft_tolower.c ft_isalnum.c ft_memchr.c \
 	   ft_putendl_fd.c ft_striteri.c ft_strncmp.c ft_toupper.c get_next_line.c \
-	   get_next_line_utils.c ft_printf.c ft_putchar_printf.c ft_putstr_printf.c \
+	    ft_printf.c ft_putchar_printf.c ft_putstr_printf.c \
 	   ft_nbr_len_printf.c ft_puthex_printf.c ft_putptr_printf.c ft_putnbr_printf.c \
 
 

@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/19 10:24:26 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/14 12:51:16 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/24 09:58:50 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ static t_vec3	calculate_forward_vector(t_camera *camera, t_vec2 *normal)
 /**
  * Set up camera ray. Calculate normalised device coordinates, clamp to
  * range 0 to 1 and scale to -1 to 1 range, apply aspect_ratio to x and
- * fov scaling to both. Then set the horizontal and vertical rotation 
+ * fov scaling to both. Then set the horizontal and vertical rotation
  * and the coordinates of the camera ray origin
  */
 t_camera	create_camera_ray(t_camera *camera, t_vec2 *pixel)

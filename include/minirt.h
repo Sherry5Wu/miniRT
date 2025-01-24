@@ -6,31 +6,30 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:55:13 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/15 09:37:58 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/24 11:46:54 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINIRT_H
 # define MINIRT_H
 
-#include <stdio.h> // for testing only
-
 # include "../libft/libft.h"
 # include "../minilibx-linux/mlx.h"
 # include <math.h>
-#include <stdbool.h>
+# include <stdbool.h>
 
 # define FLOAT_MAX 340282346638528859811704183484516925440.0
 # define DEGREE_TO_RADIAN 0.008726646259971647737
-# define WIN_WIDTH 1200
-# define WIN_HEIGHT 1200
-# define EPSILON 1e-6f
-# define VEC_MIN (t_vec3){0.0001, 0.0001, 0.0001}
+# define WIN_WIDTH 400
+# define WIN_HEIGHT 300
+# define EPSILON 1e-6
+# define M_PI 3.14159265358979323846
 
+/***  define colour***/
+# define GR "\033[0;32m"
+# define BL "\033[1;94m"
+# define RS "\033[0m"
 
-// # define PLANE 1
-// # define SPHERE 2
-// # define CYLINDER 3
 typedef struct s_colour
 {
 	int	red;
@@ -38,7 +37,7 @@ typedef struct s_colour
 	int	blue;
 }		t_colour;
 
-typedef struct	s_vec4
+typedef struct s_vec4
 {
 	float	x;
 	float	y;
@@ -62,12 +61,12 @@ typedef struct s_vec2
 /*
 	The supported shapes
 */
-typedef enum	s_object_shape
+typedef enum s_object_shape
 {
 	PLANE = 1,
 	SPHERE = 2,
 	CYLINDER = 3,
-}				t_shape;
+}			t_shape;
 
 /*
 	Use when caculating the intersections for sphere and cylinder,
@@ -93,11 +92,14 @@ typedef struct s_equation
  * 	color: represent in RGB[0,255]
  * 	radius: used in shpere and cylinder shape.
  * 	height: used in cylinder shape.
- * 	cap_t: the top center of a cylinder.
- * 	cap_b: the bottom center of a cyliner.
- * 	cy_hp: The projection position of the intersection point on the cylinder axis.
- * 	cy_hit_normal: the normal vector for the intersection point;(caculate it in
- * 	ray_intersection_plane/sphere/cylinder functions)
+ * 	cy_hit_normal: the normal vector for the intersection point;(calculate it
+ * 	in ray_intersection_plane/sphere/cylinder functions)
+ * 	camera_inside: save the information of the camera is inside of a
+ * 	cylinder or a sphere, but for plane, it means it is on the bottom side of
+ * 	the plane(against the plane normal vector)
+ * 	light_inside: save the information of the camera is inside of a
+ * 	cylinder or a sphere, but for plane, it means it is on the bottom side of
+ * 	the plane(against the plane normal vector)
  */
 typedef struct s_object
 {
@@ -109,11 +111,10 @@ typedef struct s_object
 	t_colour	colour;
 	float		radius;
 	float		height;
-	t_vec3		cap_t; // it seems we don't need it
-	t_vec3		cap_b; // it seems we don't need it
+	bool		camera_inside;
+	bool		light_inside;
 	t_vec3		cy_hit_normal;
 }	t_object;
-
 
 typedef struct s_camera
 {
@@ -123,7 +124,7 @@ typedef struct s_camera
 	t_vec3		right;
 	t_vec3		up;
 	float		aspect_ratio;
-	int		fov;
+	int			fov;
 }		t_camera;
 
 typedef struct s_ray
@@ -154,64 +155,75 @@ typedef struct s_minirt
 	t_object	*object;
 }		t_minirt;
 
-void	free_window(t_minirt *mrt);
-int		end_event(t_minirt *mrt);
-int		key_input(int keycode, t_minirt *mrt);
-t_camera	create_camera_ray(t_camera *camera, t_vec2 *pixel);
-void	render(t_minirt *mrt);
-void	modulate_colour(t_colour *colour, float light_intensity);
-float	ray_intersects_sphere(t_camera *camera_ray, t_object *sphere);
-float	ray_intersects_plane(t_camera *ray, t_object *plane);
-float	ray_intersects_cylinder(t_camera *ray, t_object *cylinder);
-float	diffusion(t_minirt *mrt, t_camera *camera_ray, t_object *object, float t);
-t_vec4	spherical_linear_interpolation(t_vec4 *q1, t_vec4 *q2, float t);
-t_vec4	angle_to_quaternion(t_vec3 *axis, float angle);
-bool	is_intersected(t_camera *ray, t_object *ob, float *t);
-void	free_array(char **array);
+/**** tools ****/
+void		free_window(t_minirt *mrt);
+int			end_event(t_minirt *mrt);
+t_vec4		angle_to_quaternion(t_vec3 *axis, float angle);
+void		free_array(char **array);
+
+/**** handle input ****/
+int			key_input(int keycode, t_minirt *mrt);
+int			object_controls(int keycode, t_minirt *mrt, int object_id);
+int			camera_controls(int keycode, t_camera *camera);
+void		build_rotation_martix(char axis, float angle, float matrix[3][3]);
+int			light_controls(int keycode, t_ray *light);
+int			adjust_ambient_brightness(int keycode, t_ray *ambient);
 
 /**** read rt file ****/
-int		read_rt_file(t_minirt *mrt, char *file);
-int		check_cylinder_data(t_minirt *mrt, char **values);
-int		check_plane_data(t_minirt *mrt, char **values);
-int		check_sphere_data(t_minirt *mrt, char **values);
-int		check_light_data(t_minirt *mrt, char **values);
-int		check_camera_data(t_minirt *mrt, char **values);
-int		check_ambient_data(t_minirt *mrt, char **values);
-int		add_colour_values(t_colour *colour, char *str, char *target);
-int		add_xyz_values(t_vec3 *xyz, char *str, char *target, int type);
-int		write_error(char *str);
-int		ft_strcmp(const char *s1, const char *s2);
-int		validate_number_array(char **array, int type);
-int		validate_decimal_string(char *str);
-float	ft_atofloat(char *str);
+int			read_rt_file(t_minirt *mrt, char *file);
+int			check_cylinder_data(t_minirt *mrt, char **values);
+int			check_plane_data(t_minirt *mrt, char **values);
+int			check_sphere_data(t_minirt *mrt, char **values);
+int			check_light_data(t_minirt *mrt, char **values);
+int			check_camera_data(t_minirt *mrt, char **values);
+int			check_ambient_data(t_minirt *mrt, char **values);
+int			check_number_of_variables(char **values, int min, int max);
+int			add_colour_values(t_colour *colour, char *str, char *target);
+int			add_xyz_values(t_vec3 *xyz, char *str, char *target, int type);
+int			write_error(char *str);
+int			ft_strcmp(const char *s1, const char *s2);
+int			validate_number_array(char **array, int type);
+int			validate_decimal_string(char *str);
+float		ft_atofloat(char *str);
+int			read_close_return(int fd);
+int			allocate_new_object(t_minirt *mrt);
 
 /**** vector_math ****/
-void	vec3_normalise(t_vec3 *vector);
-t_vec3	vec3_add(t_vec3 a, t_vec3 b);
-t_vec3	vec3_subtract(t_vec3 a, t_vec3 b);
-t_vec3	vec3_crossproduct(t_vec3 a, t_vec3 b);
-float	vec3_dot(t_vec3 a, t_vec3 b);
-t_vec3	vec3_scale(t_vec3 a, float scale);
-t_vec3	vec3_project(t_vec3 a, t_vec3 b);
-float	vec3_length(t_vec3 v);
-float	vec3_cosine(t_vec3 a, t_vec3 b);
-bool	vec3_compare(t_vec3 a, t_vec3 b);
+void		vec3_normalise(t_vec3 *vector);
+t_vec3		vec3_add(t_vec3 a, t_vec3 b);
+t_vec3		vec3_subtract(t_vec3 a, t_vec3 b);
+t_vec3		vec3_crossproduct(t_vec3 a, t_vec3 b);
+float		vec3_dot(t_vec3 a, t_vec3 b);
+t_vec3		vec3_scale(t_vec3 a, float scale);
+t_vec3		vec3_project(t_vec3 a, t_vec3 b);
+float		vec3_length(t_vec3 v);
+float		vec3_cosine(t_vec3 a, t_vec3 b);
+bool		vec3_compare(t_vec3 a, t_vec3 b);
 
 /**** vector4_math ****/
-float	vec4_dot(t_vec4	*a, t_vec4 *b);
-t_vec3	quaternion_to_vec3(t_vec4 *q);
-t_vec4	vec3_to_quaternion(t_vec3 *v);
-void	vec4_normalise(t_vec4 *q);
-t_vec4	vec4_multiply(t_vec4 *q1, t_vec4 *q2);
+float		vec4_dot(t_vec4	*a, t_vec4 *b);
+t_vec3		quaternion_to_vec3(t_vec4 *q);
+t_vec4		vec3_to_quaternion(t_vec3 *v);
+void		vec4_normalise(t_vec4 *q);
+t_vec4		vec4_multiply(t_vec4 *q1, t_vec4 *q2);
 
-/*
-	For debugging
-*/
-void	printf_vector(t_vec3 a);
-void	print_all_objects(t_minirt *mrt);
-void	print_plane(t_object plane);
-void	print_sphere(t_object sphere);
-void	print_cylinder(t_object cylinder);
-void	print_shape(t_object *shape);
+/**** calculate intersections ****/
+float		ray_intersects_sphere(t_camera *camera_ray, t_object *sphere);
+float		ray_intersects_plane(t_camera *ray, t_object *plane);
+float		ray_intersects_cylinder(t_camera *ray, t_object *cylinder);
+float		intersects_cylinder_side(t_camera *ray, t_object *cylinder);
+
+/**** render ****/
+void		render(t_minirt *mrt);
+t_vec3		get_hit_normal(t_object *ob, t_vec3 hit_point);
+t_camera	create_camera_ray(t_camera *camera, t_vec2 *pixel);
+void		modulate_colour(t_colour *colour, float light_intensity);
+float		diffusion(t_minirt *mrt, t_camera *camera_ray, t_object *object,
+				float t);
+int			calculate_colour(t_minirt *mrt, t_vec2 *pixel);
+bool		is_intersected(t_camera *ray, t_object *ob, float *t);
+bool		is_obscured_from_hitpoint_to_light(t_object *ob, t_minirt *mrt,
+				t_camera *c_ray, float t);
+void		set_camera_light_position_info_for_objects(t_minirt *mrt);
 
 #endif
