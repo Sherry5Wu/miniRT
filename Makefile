@@ -6,7 +6,7 @@
 #    By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/04 10:50:10 by arissane          #+#    #+#              #
-#    Updated: 2025/01/24 11:44:23 by jingwu           ###   ########.fr        #
+#    Updated: 2025/01/24 12:01:59 by jingwu           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ LIBS = -lXext -lX11 -lm
 HEADER = -I./include -I./libft -I ./$(MLX_DIR)
 
 SRCS_DIR = src
-SRCS_SUDIR = intersection debug render
+SRCS_SUDIR = intersection render control math parsing
 VPATH = $(SRCS_DIR) $(addprefix $(SRCS_DIR)/, $(SRCS_SUDIR))
 SRCS = main.c \
        read_rt_file.c \
