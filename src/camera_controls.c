@@ -6,19 +6,11 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 09:15:37 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/24 11:31:08 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/27 10:55:00 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-
-/**
- * Builds a rotation matrix for the given axis and angle.
- * @param axis The axis of rotation ('X', 'Y', or 'Z').
- * @param angle The angle of rotation in degrees.
- * @param matrix The output 3x3 rotation matrix.
- */
-
 
 static t_vec3	rotate_vector(t_vec3 v, float matrix[3][3])
 {
@@ -43,23 +35,23 @@ static void	update_forward_up_right_vectors(t_camera *camera,
 
 int	camera_rotation(int keycode, t_camera *camera)
 {
-	float	rotation_martix[3][3];
+	float	rotation_matrix[3][3];
 
 	if (keycode == 101)
-		build_rotation_martix('Y', 5.0f, rotation_martix);
+		build_rotation_matrix('Y', 5.0f, rotation_matrix);
 	else if (keycode == 113)
-		build_rotation_martix('Y', -5.0f, rotation_martix);
+		build_rotation_matrix('Y', -5.0f, rotation_matrix);
 	else if (keycode == 120)
-		build_rotation_martix('X', 5.0f, rotation_martix);
+		build_rotation_matrix('X', 5.0f, rotation_matrix);
 	else if (keycode == 122)
-		build_rotation_martix('X', -5.0f, rotation_martix);
+		build_rotation_matrix('X', -5.0f, rotation_matrix);
 	else if (keycode == 118)
-		build_rotation_martix('Z', 5.0f, rotation_martix);
+		build_rotation_matrix('Z', 5.0f, rotation_matrix);
 	else if (keycode == 99)
-		build_rotation_martix('Z', -5.0f, rotation_martix);
+		build_rotation_matrix('Z', -5.0f, rotation_matrix);
 	else
 		return (1);
-	update_forward_up_right_vectors(camera, rotation_martix);
+	update_forward_up_right_vectors(camera, rotation_matrix);
 	return (0);
 }
 

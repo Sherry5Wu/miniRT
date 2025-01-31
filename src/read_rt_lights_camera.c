@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 11:03:10 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/24 09:09:20 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/31 08:50:04 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ static void	set_camera_default_orientation(t_minirt *mrt)
 	up.x = 0;
 	up.y = 1;
 	up.z = -EPSILON;
-	vec3_normalise(&up);
 	mrt->camera.right = vec3_crossproduct(mrt->camera.direction, up);
 	vec3_normalise(&mrt->camera.right);
 	mrt->camera.up = vec3_crossproduct(mrt->camera.right,
@@ -57,6 +56,21 @@ int	check_ambient_data(t_minirt *mrt, char **values)
 	return (0);
 }
 
+int	are_all_integers(char *str)
+{
+	int	i;
+
+	i = 0;
+	if (!str)
+		return (0);
+	if (str[0] == '+')
+		i++;
+	if (validate_number_string(&str[i]) == 1)
+		return (1);
+	else
+		return (0);
+}
+
 int	check_camera_data(t_minirt *mrt, char **values)
 {
 	mrt->camera_count++;
@@ -70,7 +84,10 @@ int	check_camera_data(t_minirt *mrt, char **values)
 	if (add_xyz_values(&mrt->camera.direction, values[2],
 			"Camera orientation ", 2) == 1)
 		return (1);
-	mrt->camera.rotation = vec3_to_quaternion(&mrt->camera.direction);
+	if (check_if_normalised(mrt->camera.direction, "Camera") == 1)
+		return (1);
+	if (are_all_integers(values[3]) == 1)
+		return (write_error("Camera FOV is not an int number"));
 	mrt->camera.fov = ft_atoi(values[3]);
 	if (mrt->camera.fov < 0 || mrt->camera.fov > 180)
 		return (write_error("Camera FOV should be between 0 to 180"));
@@ -92,7 +109,7 @@ int	check_light_data(t_minirt *mrt, char **values)
 			"Light coordinates ", 1) == 1)
 		return (1);
 	if (validate_decimal_string(values[2]) == 1)
-		return (write_error("Syntax error; the light brightness "
+		return (write_error("Light brightness "
 				"ratio should be a decimal number"));
 	mrt->light.brightness = ft_atofloat(values[2]);
 	if (mrt->light.brightness > 1.0 || mrt->light.brightness < 0.0)

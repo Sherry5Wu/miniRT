@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 11:00:06 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/22 10:32:24 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/31 08:46:41 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ int	add_colour_values(t_colour *colour, char *str, char *target)
 		return (write_error2(target, "should have 3 colour values"));
 	if (validate_number_array(colours, 1) == 1)
 		return (write_error2(target, "colour values should be integers"));
+	if (are_all_integers(colours[0]) == 1 || are_all_integers(colours[1]) == 1
+		|| are_all_integers(colours[2]) == 1)
+			return (write_error2(target, "colour values should be integers"));
 	colour->red = ft_atoi(colours[0]);
 	colour->green = ft_atoi(colours[1]);
 	colour->blue = ft_atoi(colours[2]);

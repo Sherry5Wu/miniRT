@@ -6,7 +6,7 @@
 /*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/16 11:32:19 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/16 09:45:39 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/28 10:06:22 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,14 @@ static int	scene_controls(int keycode, t_minirt *mrt, int object_id)
 {
 	if (object_controls(keycode, mrt, object_id) == 0)
 		return (0);
-	else if (light_controls(keycode, &mrt->light) == 0)
+	else if (mrt->light_count == 1
+		&& light_controls(keycode, &mrt->light) == 0)
 		return (0);
-	else if (camera_controls(keycode, &mrt->camera) == 0)
+	else if (mrt->camera_count == 1
+		&& camera_controls(keycode, &mrt->camera) == 0)
 		return (0);
-	else if (adjust_ambient_brightness(keycode, &mrt->ambient) == 0)
+	else if (mrt->ambient_count == 1
+		&& adjust_ambient_brightness(keycode, &mrt->ambient) == 0)
 		return (0);
 	else
 		return (1);
@@ -38,6 +41,8 @@ static void	display_type(int type)
 
 static int	display_values(int keycode, t_minirt *mrt, int *object_id)
 {
+	if (mrt->object_count < 1)
+		return (0);
 	if (keycode == 61)
 	{
 		(*object_id)++;
@@ -77,12 +82,6 @@ int	key_input(int keycode, t_minirt *mrt)
 			mrt->img = mlx_new_image(mrt->mlx, WIN_WIDTH, WIN_HEIGHT);
 		}
 		render(mrt);
-	}
-	else
-	{
-		if (keycode != 65293)
-			ft_printf("Entered key == %d\n", keycode);
-		return (1);
 	}
 	return (0);
 }

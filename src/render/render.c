@@ -6,26 +6,11 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/09 10:39:02 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/21 12:14:42 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/30 11:49:07 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-/**
- * 	@brief
- * 	After getting the light brightness and diffusion intensity, then we change
- * 	the base colour.
- */
-void	modulate_colour(t_colour *colour, float light_intensity)
-{
-	if (light_intensity < 0.0f)
-		light_intensity = 0.0f;
-	if (light_intensity > 1.0f)
-		light_intensity = 1.0f;
-	colour->red = (int)(colour->red * light_intensity);
-	colour->green = (int)(colour->green * light_intensity);
-	colour->blue = (int)(colour->blue * light_intensity);
-}
 
 /**
  * 	@brief
@@ -50,6 +35,7 @@ void	render(t_minirt *mrt)
 	int		colour;
 	t_vec2	pixel;
 
+	mrt->light_on_surface = false;
 	set_camera_light_position_info_for_objects(mrt);
 	pixel.y = 0;
 	while (pixel.y < WIN_HEIGHT)

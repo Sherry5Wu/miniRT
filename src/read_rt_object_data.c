@@ -6,11 +6,33 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 10:55:05 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/23 11:58:48 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/30 11:33:55 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
+#include <stdio.h>
+
+int	check_if_normalised(t_vec3 orientation, char *object)
+{
+	if ((vec3_length(orientation) - 1) <= -0.002
+		|| (vec3_length(orientation) - 1) >= 0.002)
+	{
+		ft_putstr_fd("Error\n", 2);
+		ft_putstr_fd(object, 2);
+		ft_putstr_fd(" orientation is not a normalised vector\n", 2);
+		vec3_normalise(&orientation);
+		if ((vec3_length(orientation) - 1) <= -0.002
+			|| (vec3_length(orientation) - 1) >= 0.002)
+			ft_putstr_fd("please add values between -1 and 1 "
+				"with a combined value close to 1", 2);
+		else
+			printf("Try:\n%f,%f,%f\n", orientation.x,
+				orientation.y, orientation.z);
+		return (1);
+	}
+	return (0);
+}
 
 int	check_sphere_data(t_minirt *mrt, char **values)
 {
@@ -39,6 +61,10 @@ int	check_sphere_data(t_minirt *mrt, char **values)
 	return (0);
 }
 
+/**
+ * @brief the float 0.002 is select by real example, like a vector
+ * {0.577,0.577,0.577}
+ */
 int	check_plane_data(t_minirt *mrt, char **values)
 {
 	t_object	plane;
@@ -54,6 +80,8 @@ int	check_plane_data(t_minirt *mrt, char **values)
 		return (1);
 	if (add_xyz_values(&plane.orientation, values[2],
 			"Plane orientation ", 2) == 1)
+		return (1);
+	if (check_if_normalised(plane.orientation, "Plane") == 1)
 		return (1);
 	plane.rotation = vec3_to_quaternion(&plane.orientation);
 	if (add_colour_values(&plane.colour, values[3], "Plane ") == 1)
@@ -98,6 +126,8 @@ int	check_cylinder_data(t_minirt *mrt, char **values)
 		return (1);
 	if (add_xyz_values(&cylinder.orientation, values[2],
 			"Cylinder orientation ", 2) == 1)
+		return (1);
+	if (check_if_normalised(cylinder.orientation, "Cylinder") == 1)
 		return (1);
 	if (check_cylinder_data2(&cylinder, values) == 1)
 		return (1);

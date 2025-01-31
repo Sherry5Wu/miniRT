@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 10:13:34 by jingwu            #+#    #+#             */
-/*   Updated: 2025/01/22 09:48:31 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/30 12:55:33 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,22 +17,25 @@
  * 	change the colour with a multiplier of the distance from the camera and
  * 	clamp it to a range of 0-255
  */
-static void	check_base_colour(t_object *object, t_colour *col, float t)
+static void	check_base_colour(t_object *object, t_minirt *mrt, float t)
 {
 	float	depth;
 	float	max_distance;
 
 	max_distance = 500.0f;
 	depth = expf(-t / max_distance);
-	col->red = (object->colour.red * depth);
-	col->green = (object->colour.green * depth);
-	col->blue = (object->colour.blue * depth);
-	if (col->red > 255)
-		col->red = 255;
-	if (col->green > 255)
-		col->green = 255;
-	if (col->blue > 255)
-		col->blue = 255;
+	mrt->base_colour.red = (object->colour.red * depth);
+	mrt->base_colour.green = (object->colour.green * depth);
+	mrt->base_colour.blue = (object->colour.blue * depth);
+	if (mrt->base_colour.red > 255)
+		mrt->base_colour.red = 255;
+	if (mrt->base_colour.green > 255)
+		mrt->base_colour.green = 255;
+	if (mrt->base_colour.blue > 255)
+		mrt->base_colour.blue = 255;
+	mrt->ambient_added.red = mrt->base_colour.red;
+	mrt->ambient_added.green = mrt->base_colour.green;
+	mrt->ambient_added.blue = mrt->base_colour.blue;
 }
 
 /**
@@ -76,6 +79,17 @@ static void	check_intersection(t_minirt *mrt, t_camera *camera_ray,
 	}
 }
 
+static float	update_intensity(t_object *ob, t_minirt *mrt,
+	t_camera *camera_ray, float t)
+{
+	float	intensity;
+
+	intensity = 0.0;
+	if (is_obscured_from_hitpoint_to_light(ob, mrt, camera_ray, t) == false)
+		intensity = diffusion(mrt, camera_ray, ob, t);
+	return (intensity);
+}
+
 /**
  *  @brief
  * 	Check what colour the pixel should be depending on if and how the camera
@@ -84,7 +98,7 @@ static void	check_intersection(t_minirt *mrt, t_camera *camera_ray,
 int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 {
 	t_camera	camera_ray;
-	t_colour	colour;
+	t_colour	final;
 	float		t;
 	int			id;
 	float		intensity;
@@ -96,16 +110,16 @@ int	calculate_colour(t_minirt *mrt, t_vec2 *pixel)
 	check_intersection(mrt, &camera_ray, &t, &id);
 	if (t > 0)
 	{
-		check_base_colour(&mrt->object[id], &colour, t);
-		if (mrt->object[id].camera_inside == mrt->object[id].light_inside)
+		check_base_colour(&mrt->object[id], mrt, t);
+		add_ambient(mrt);
+		if (mrt->light_on_surface == false)
 		{
-			if (is_obscured_from_hitpoint_to_light(&mrt->object[id],
-					mrt, &camera_ray, t) == false)
-				intensity = diffusion(mrt, &camera_ray, &mrt->object[id], t);
+			if (mrt->object[id].camera_inside == mrt->object[id].light_inside)
+				intensity = update_intensity(&mrt->object[id], mrt,
+						&camera_ray, t);
 		}
-		intensity += mrt->ambient.brightness;
-		modulate_colour(&colour, intensity);
-		return ((colour.red << 16) | (colour.green << 8) | colour.blue);
+		modulate_colour(mrt, &final, intensity);
+		return ((final.red << 16) | (final.green << 8) | final.blue);
 	}
 	return (0x000000);
 }

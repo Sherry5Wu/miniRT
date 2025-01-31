@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/18 11:28:39 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/23 08:11:49 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/22 16:13:04 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define LIBFT_H
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10
+#  define BUFFER_SIZE 42
 # endif
 
 # include <unistd.h>
@@ -75,6 +75,11 @@ void	ft_lstiter(t_list *lst, void (*f)(void *));
 t_list	*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 char	*get_next_line(int fd);
+char	*free_address(char **str);
+char	*strchr_gnl(char *str, int c);
+char	*strjoin_gnl(char *saved_text, char *buffer);
+char	*substr_gnl(char *saved_text, size_t start, size_t len, size_t i);
+size_t	strlen_gnl(char	*str, char c);
 
 int		ft_putchar_printf(char c);
 int		ft_putstr_printf(char *str);

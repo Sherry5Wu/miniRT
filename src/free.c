@@ -6,7 +6,7 @@
 /*   By: arissane <arissane@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 12:15:56 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/13 13:10:14 by arissane         ###   ########.fr       */
+/*   Updated: 2025/01/30 11:11:01 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	free_array(char **array)
 void	free_window(t_minirt *mrt)
 {
 	if (!mrt)
-		exit(0);
+		return ;
 	if (mrt->img)
 		mlx_destroy_image(mrt->mlx, mrt->img);
 	if (mrt->win && mrt->mlx)
@@ -41,11 +41,18 @@ void	free_window(t_minirt *mrt)
 	}
 	if (mrt->object)
 		free(mrt->object);
-	exit(0);
+	exit (1);
 }
 
 int	end_event(t_minirt *mrt)
 {
 	free_window(mrt);
 	return (0);
+}
+
+void	fatal_error(char *message, int error)
+{
+	ft_putstr_fd("Error\n", 2);
+	ft_putstr_fd(message, 2);
+	exit (error);
 }

@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/24 11:30:56 by jingwu            #+#    #+#             */
-/*   Updated: 2025/01/24 11:43:06 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/27 10:53:53 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static void	matrix_for_z(float matrix[3][3], float cosa, float sina)
 	matrix[2][2] = 1;
 }
 
-void	build_rotation_martix(char axis, float angle, float matrix[3][3])
+void	build_rotation_matrix(char axis, float angle, float matrix[3][3])
 {
 	float	rad;
 	float	cosa;
@@ -62,41 +62,8 @@ void	build_rotation_martix(char axis, float angle, float matrix[3][3])
 	sina = sin(rad);
 	if (axis == 'X')
 		matrix_for_x(matrix, cosa, sina);
-	// {
-	// 	matrix[0][0] = 1;
-	// 	matrix[0][1] = 0;
-	// 	matrix[0][2] = 0;
-	// 	matrix[1][0] = 0;
-	// 	matrix[1][1] = cosa;
-	// 	matrix[1][2] = -sina;
-	// 	matrix[2][0] = 0;
-	// 	matrix[2][1] = sina;
-	// 	matrix[2][2] = cosa;
-	// }
 	else if (axis == 'Y')
 		matrix_for_y(matrix, cosa, sina);
-	// {
-	// 	matrix[0][0] = cosa;
-	// 	matrix[0][1] = 0;
-	// 	matrix[0][2] = sina;
-	// 	matrix[1][0] = 0;
-	// 	matrix[1][1] = 1;
-	// 	matrix[1][2] = 0;
-	// 	matrix[2][0] = -sina;
-	// 	matrix[2][1] = 0;
-	// 	matrix[2][2] = cosa;
-	// }
 	else if (axis == 'Z')
 		matrix_for_z(matrix, cosa, sina);
-	// {
-	// 	matrix[0][0] = cosa;
-	// 	matrix[0][1] = -sina;
-	// 	matrix[0][2] = 0;
-	// 	matrix[1][0] = sina;
-	// 	matrix[1][1] = cosa;
-	// 	matrix[1][2] = 0;
-	// 	matrix[2][0] = 0;
-	// 	matrix[2][1] = 0;
-	// 	matrix[2][2] = 1;
-	// }
 }
