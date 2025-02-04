@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:53:49 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/30 13:45:15 by arissane         ###   ########.fr       */
+/*   Updated: 2025/02/04 09:10:49 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,34 +15,46 @@
 static void	print_controls(void)
 {
 	ft_putstr_fd(BL"Object controls:\n"RS GR" - Selection:"RS" =/-\n", 1);
-	ft_putstr_fd(GR" - Translation:\n"RS"     * Left/Right: ←/→\n     ", 1);
-	ft_putstr_fd("* Up/Down: Space/Ctrl\n     * Forward/Backward:  ↑/↓\n", 1);
+	ft_putstr_fd(GR" - Translation:\n"RS"     * -x/+x: ←/→\n     ", 1);
+	ft_putstr_fd("* +y/-y: Space/Ctrl\n     * +z/-z:  ↑/↓\n", 1);
 	ft_putstr_fd(GR" - Rotation\n"RS"     * X-axis: J\n     ", 1);
 	ft_putstr_fd("* Y-axis: K\n     * Z-axis: L\n", 1);
-	ft_putstr_fd(GR" - Resize\n"RS"     * Diameter(-/+): </>\n     ", 1);
+	ft_putstr_fd(GR" - Resize\n"RS"     * Diameter(-/+): ,/.\n     ", 1);
 	ft_putstr_fd("* Height(-/+): N/M\n", 1);
 	ft_putstr_fd(BL"\nCamera controls(based on global x,y and z):\n"RS
 		GR" - Translation\n"RS, 1);
-	ft_putstr_fd("     * Left/Right: A/D\n     * Up/Down: R/F\n     ", 1);
-	ft_putstr_fd("* Forward/Backward: W/S\n", 1);
+	ft_putstr_fd("     * -x/+x: A/D\n     * +y/-y: R/F\n     ", 1);
+	ft_putstr_fd("* +z/-z: W/S\n", 1);
 	ft_putstr_fd(GR" - Rotation\n"RS"     * X-axis(up/down): Z/X\n     ", 1);
 	ft_putstr_fd("* Y-axis(left/right): Q/E\n     * Z-axis(left/right): "
 		"C/V\n", 1);
 	ft_putstr_fd(BL"\nLight controls:\n"RS GR" - Translation\n"RS"     * "
-		"Left/Right: 4/6\n     * Up/Down: 7/1\n     * Forward/Backward: 8/5\n",
+		"-x/+x: 4/6\n     * +y/-y: 7/1\n     * +z/-z: 8/5\n",
 		1);
 	ft_putstr_fd(GR" - Brightness(-/+): "RS"9/3\n\n", 1);
 	ft_putstr_fd(BL"Ambient Light\n"RS GR" - Brightness(-/+):"RS" [/]\n", 1);
 	ft_putstr_fd(BL"\n************************************************\n"RS, 1);
 }
 
-static void	check_number_of_elements(t_minirt *mrt)
+static int	check_number_of_elements(t_minirt *mrt)
 {
-	if (mrt->camera_count == 0)
-		ft_putstr_fd("Warning\nNo camera found in the rt file\n", 1);
-	else if (mrt->ambient_count == 0 && mrt->light_count == 0)
-		ft_putstr_fd("Warning\nNo light source or ambient light found "
-			"in the rt file\n", 1);
+	if (mrt->camera_count == 0 || mrt->ambient_count == 0
+		|| mrt->light_count == 0 || mrt->object_count == 0)
+	{
+		ft_putstr_fd("Error\n", 2);
+		if (mrt->camera_count == 0)
+			ft_putstr_fd("No camera found in the rt file\n", 2);
+		if (mrt->ambient_count == 0)
+			ft_putstr_fd("No ambient light found in the rt file\n", 2);
+		if (mrt->light_count == 0)
+			ft_putstr_fd("No light found in the rt file\n", 2);
+		if (mrt->object_count == 0)
+			ft_putstr_fd("No objects found in the rt file\n", 2);
+		if (mrt->object)
+			free(mrt->object);
+		return (1);
+	}
+	return (0);
 }
 
 static void	initialise(t_minirt *mrt, char *filename)
@@ -100,7 +112,8 @@ int	main(int argc, char **argv)
 			free(mrt.object);
 		return (1);
 	}
-	check_number_of_elements(&mrt);
+	if (check_number_of_elements(&mrt) == 1)
+		return (1);
 	initialise(&mrt, argv[1]);
 	render(&mrt);
 	print_controls();

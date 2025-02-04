@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 13:11:38 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/23 08:57:56 by arissane         ###   ########.fr       */
+/*   Updated: 2025/02/03 14:30:30 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	write_error(char *str)
 {
-	ft_putstr_fd("Error!\n", 2);
+	ft_putstr_fd("Error\n", 2);
 	ft_putstr_fd(str, 2);
 	ft_putchar_fd('\n', 2);
 	return (1);
@@ -60,8 +60,6 @@ static float	get_fraction(char *str, double number)
 	divisor = 10.0;
 	while (str[i] >= '0' && str[i] <= '9')
 	{
-		if (fraction > FLOAT_MAX)
-			return (FLOAT_MAX);
 		fraction = fraction + ((str[i] - 48) / divisor);
 		divisor = 10.0 * divisor;
 		i++;
@@ -87,13 +85,13 @@ float	ft_atofloat(char *str)
 	while (str[i] >= '0' && str[i] <= '9')
 	{
 		if (number > FLOAT_MAX)
-			break ;
+			return ((float)(sign * FLOAT_MAX));
 		number = number * 10.0 + (str[i] - 48);
 		i++;
 	}
 	if (str[i] == '.')
 		number = get_fraction(&str[i + 1], number);
-	if (number >= FLOAT_MAX)
-		return (FLOAT_MAX);
+	if (number > FLOAT_MAX)
+		return ((float)(sign * FLOAT_MAX));
 	return ((float)(sign * number));
 }

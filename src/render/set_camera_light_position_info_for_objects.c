@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_camera_light_position_info_for_objects.        :+:      :+:    :+:   */
+/*   set_camera_light_position_info_for_object          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 14:34:27 by jingwu            #+#    #+#             */
-/*   Updated: 2025/01/27 10:28:56 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/01/31 10:16:06 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,11 @@ static bool	inside_cy(t_object *cy, t_vec3 point, t_minirt *mrt, bool light)
 	closest_point_on_axis = vec3_scale(cy->orientation, projection_length);
 	perpend_vector = vec3_subtract(center_to_point, closest_point_on_axis);
 	distance_squared = vec3_dot(perpend_vector, perpend_vector);
-	if (light == true && distance_squared - cy->radius * cy->radius >= -EPSILON
-		&& distance_squared - cy->radius * cy->radius <= EPSILON)
+	if ((light == true && distance_squared - cy->radius * cy->radius >= -EPSILON
+			&& distance_squared - cy->radius * cy->radius <= EPSILON)
+		|| ((projection_length == -cy->height / 2
+				|| projection_length == cy->height / 2)
+			&& distance_squared <= cy->radius * cy->radius))
 		mrt->light_on_surface = true;
 	return (distance_squared <= cy->radius * cy->radius);
 }

@@ -6,12 +6,11 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 10:55:05 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/30 11:33:55 by arissane         ###   ########.fr       */
+/*   Updated: 2025/02/04 08:37:21 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minirt.h"
-#include <stdio.h>
 
 int	check_if_normalised(t_vec3 orientation, char *object)
 {
@@ -31,6 +30,7 @@ int	check_if_normalised(t_vec3 orientation, char *object)
 				orientation.y, orientation.z);
 		return (1);
 	}
+	vec3_normalise(&orientation);
 	return (0);
 }
 
@@ -48,7 +48,7 @@ int	check_sphere_data(t_minirt *mrt, char **values)
 			"Sphere coordinates ", 1) == 1)
 		return (1);
 	if (validate_decimal_string(values[2]) == 1)
-		return (write_error("Sphere diameter should be a decimal number"));
+		return (write_error("Sphere diameter should be a decimal"));
 	sphere.radius = ft_atofloat(values[2]);
 	if (sphere.radius < 0.0f)
 		return (write_error("Sphere diameter should be positive"));
@@ -95,14 +95,14 @@ static int	check_cylinder_data2(t_object *cylinder, char **values)
 {
 	cylinder->rotation = vec3_to_quaternion(&cylinder->orientation);
 	if (validate_decimal_string(values[3]) == 1)
-		return (write_error("Cylinder diameter should be a decimal number"));
+		return (write_error("Cylinder diameter should be a decimal"));
 	cylinder->radius = ft_atofloat(values[3]);
 	if (cylinder->radius < 0.0f)
 		return (write_error("Cylinder diameter should be positive"));
 	if (cylinder->radius != 0)
 		cylinder->radius = cylinder->radius / 2;
 	if (validate_decimal_string(values[4]) == 1)
-		return (write_error("Cylinder height should be a decimal number"));
+		return (write_error("Cylinder height should be a decimal"));
 	cylinder->height = ft_atofloat(values[4]);
 	if (cylinder->height < 0.0f)
 		return (write_error("Cylinder height should be positive"));
@@ -118,7 +118,7 @@ int	check_cylinder_data(t_minirt *mrt, char **values)
 	if (allocate_new_object(mrt) == 1)
 		return (1);
 	if (check_number_of_variables(values, 6, 6) == 1)
-		return (write_error("Cylinder; invalid number of variables"));
+		return (write_error("Invalid number of variables for a cylinder"));
 	cylinder.shape = CYLINDER;
 	cylinder.id = mrt->object_count + 1;
 	if (add_xyz_values(&cylinder.position, values[1],

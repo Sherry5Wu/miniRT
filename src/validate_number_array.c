@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/13 13:19:21 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/30 10:25:43 by arissane         ###   ########.fr       */
+/*   Updated: 2025/02/03 14:49:38 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ int	validate_number_string(char *str)
 	int	i;
 
 	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
 	while (str[i])
 	{
 		if (str[i] < '0' || str[i] > '9')
@@ -28,9 +30,14 @@ int	validate_number_string(char *str)
 
 static int	non_integer_checking(char *str, int i)
 {
-	while (str[i] && str[i] != '.')
+	int	dot;
+
+	dot = 0;
+	while (str[i])
 	{
-		if (str[i] < '0' || str[i] > '9')
+		if (str[i] == '.')
+			dot++;
+		if (dot > 1 || str[i] < '.' || str[i] == '/' || str[i] > '9' )
 			return (1);
 		i++;
 	}
@@ -44,7 +51,7 @@ int	validate_decimal_string(char *str)
 	i = 0;
 	if (!str)
 		return (1);
-	if (str[i] == '-')
+	if (str[i] == '-' || str[i] == '+')
 		i++;
 	if (!str[i])
 		return (1);

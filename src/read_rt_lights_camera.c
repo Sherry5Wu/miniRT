@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/14 11:03:10 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/31 08:50:04 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/02/03 14:53:12 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ int	check_ambient_data(t_minirt *mrt, char **values)
 {
 	mrt->ambient_count++;
 	if (mrt->ambient_count > 1)
-		return (write_error("Number of ambient lighting exceeds 1"));
+		return (write_error("Number of ambient lights exceeds 1"));
 	if (check_number_of_variables(values, 3, 3) == 1)
 		return (write_error("Invalid number of variables for "
-				"ambient lighting"));
+				"ambient light"));
 	if (validate_decimal_string(values[1]) == 1)
 		return (write_error("Syntax error for ambient light ratio, "
 				"should be in a range from 0.0 to 1.0"));
@@ -54,21 +54,6 @@ int	check_ambient_data(t_minirt *mrt, char **values)
 			"Ambient light ") == 1)
 		return (1);
 	return (0);
-}
-
-int	are_all_integers(char *str)
-{
-	int	i;
-
-	i = 0;
-	if (!str)
-		return (0);
-	if (str[0] == '+')
-		i++;
-	if (validate_number_string(&str[i]) == 1)
-		return (1);
-	else
-		return (0);
 }
 
 int	check_camera_data(t_minirt *mrt, char **values)
@@ -86,13 +71,11 @@ int	check_camera_data(t_minirt *mrt, char **values)
 		return (1);
 	if (check_if_normalised(mrt->camera.direction, "Camera") == 1)
 		return (1);
-	if (are_all_integers(values[3]) == 1)
-		return (write_error("Camera FOV is not an int number"));
+	if (validate_number_string(values[3]) == 1)
+		return (write_error("Camera FOV is not an integer"));
 	mrt->camera.fov = ft_atoi(values[3]);
 	if (mrt->camera.fov < 0 || mrt->camera.fov > 180)
 		return (write_error("Camera FOV should be between 0 to 180"));
-	if (WIN_WIDTH < 1 || WIN_HEIGHT < 1)
-		return (write_error("Window dimensions are too small"));
 	mrt->camera.aspect_ratio = (float)WIN_WIDTH / (float)WIN_HEIGHT;
 	set_camera_default_orientation(mrt);
 	return (0);

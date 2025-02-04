@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:55:13 by arissane          #+#    #+#             */
-/*   Updated: 2025/01/31 08:50:16 by jingwu           ###   ########.fr       */
+/*   Updated: 2025/02/03 14:50:47 by arissane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <math.h>
 # include <stdbool.h>
 # include <errno.h>
+# include <stdio.h>
 
 # ifndef WIN_WIDTH
 #  define WIN_WIDTH 300
@@ -194,7 +195,6 @@ int			ft_strcmp(const char *s1, const char *s2);
 int			validate_number_array(char **array, int type);
 int			validate_decimal_string(char *str);
 int			validate_number_string(char *str);
-int			are_all_integers(char *str);
 float		ft_atofloat(char *str);
 int			read_close_return(int fd);
 int			allocate_new_object(t_minirt *mrt);

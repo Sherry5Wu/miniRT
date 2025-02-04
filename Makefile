@@ -6,7 +6,7 @@
 #    By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/04 10:50:10 by arissane          #+#    #+#              #
-#    Updated: 2025/01/30 11:49:32 by arissane         ###   ########.fr        #
+#    Updated: 2025/02/04 11:24:35 by jingwu           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,8 @@ NAME = miniRT
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra -DWIN_WIDTH=$(WIN_WIDTH) -DWIN_HEIGHT=$(WIN_HEIGHT)
-WIN_WIDTH ?= 300
-WIN_HEIGHT ?= 300
+WIN_WIDTH ?= 500
+WIN_HEIGHT ?= 400
 
 # miniLibX
 MLX_URL = https://github.com/42Paris/minilibx-linux.git
