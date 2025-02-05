@@ -6,7 +6,7 @@
 /*   By: jingwu <jingwu@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/04 11:53:49 by arissane          #+#    #+#             */
-/*   Updated: 2025/02/04 09:10:49 by arissane         ###   ########.fr       */
+/*   Updated: 2025/02/05 09:10:34 by jingwu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ static int	check_number_of_elements(t_minirt *mrt)
 			free(mrt->object);
 		return (1);
 	}
-	return (0);
+	return (0);ha
 }
 
 static void	initialise(t_minirt *mrt, char *filename)
