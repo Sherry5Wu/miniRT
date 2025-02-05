@@ -100,3 +100,12 @@ Ray tracing follows the path of light rays as they travel through a scene, bounc
 
 	* Additional rays simulate indirect lighting (light bouncing off multiple surfaces), creating soft shadows and realistic ambient lighting.
 	* This effect is also known as path tracing (a more advanced version of ray tracing).
+
+### Useful books
+
+https://www.gamedev.net/tutorials/programming/graphics/ray-tracing-part-1-r3556/
+
+https://raytracing.github.io/books/RayTracingInOneWeekend.html
+
+https://books.out.csli.me/NonFiction/Programming/The%20Ray%20Tracer%20Challenge-Pragmatic%20Bookshelf%20%282019%29%20-%20Jamis%20Buck.pdf
+
