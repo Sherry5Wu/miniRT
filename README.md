@@ -65,10 +65,13 @@ You can using ".rt" files in the scenes folder to generate 3D scenes. Below are 
   <img src="images/planets.png" width="700">
 </div>
 
+
 To check for memory leaks:
-	```
-	valgrind --leak-check=full --show-leak-kinds=all ./miniRT <scene_file.rt>
-	```
+
+```sh
+valgrind --leak-check=full --show-leak-kinds=all ./miniRT <scene_file.rt>
+```
+
 
 ## 📚 Some Knowledges
 
