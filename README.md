@@ -49,9 +49,9 @@ You can using ".rt" files in the scenes folder to generate 3D scenes. Below are 
 ### Basic Shapes
 
 <div style="display: flex; justify-content: center; gap: 10px;">
-  <img src="images/plane.png" width="400">
-  <img src="images/sphere.png" width="400">
-  <img src="images/cylinder.png" width="400">
+  <img src="images/plane.png" width="350">
+  <img src="images/sphere.png" width="350">
+  <img src="images/cylinder.png" width="350">
 </div>
 
 ### Multi-objects (Thanks for the contributors who made these rt files)
