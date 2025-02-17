@@ -54,7 +54,7 @@ static int	check_number_of_elements(t_minirt *mrt)
 			free(mrt->object);
 		return (1);
 	}
-	return (0);ha
+	return (0);
 }
 
 static void	initialise(t_minirt *mrt, char *filename)
